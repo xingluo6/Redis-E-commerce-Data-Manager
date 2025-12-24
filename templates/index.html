@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}主页{% endblock %}
+
+{% block content %}
+<div class="jumbotron text-center">
+    <h1 class="display-4">欢迎来到 Redis 电商大数据管理系统</h1>
+    <p class="lead">通过此系统，您可以管理和分析存储在 Redis 中的电商数据。</p>
+    <hr class="my-4">
+    <p>请使用导航栏选择您想要执行的操作。</p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('data_management') }}" role="button">开始管理数据</a>
+</div>
+{% endblock %}

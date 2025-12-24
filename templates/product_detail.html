@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}商品详情{% endblock %}
+
+{% block content %}
+<h2>商品详情 - {{ product.name }}</h2>
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">{{ product.name }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">ID: {{ product.product_id }}</h6>
+        <p class="card-text"><strong>描述:</strong> {{ product.description }}</p>
+        <p class="card-text"><strong>分类:</strong> {{ product.category }}</p>
+        <p class="card-text"><strong>价格:</strong> {{ "%.2f" | format(product.price) }}</p>
+        <p class="card-text"><strong>库存:</strong> {{ product.stock }}</p>
+        <p class="card-text"><strong>创建时间:</strong> {{ product.created_at }}</p>
+        <a href="{{ url_for('edit_product', product_id=product.product_id) }}" class="btn btn-warning">编辑</a>
+        <a href="{{ url_for('list_products') }}" class="btn btn-secondary">返回商品列表</a>
+    </div>
+</div>
+{% endblock %}

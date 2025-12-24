@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}订单详情{% endblock %}
+
+{% block content %}
+<h2>订单详情 - {{ order.order_id }}</h2>
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">订单ID: {{ order.order_id }}</h5>
+        <p class="card-text"><strong>用户ID:</strong> <a href="{{ url_for('user_detail', user_id=order.user_id) }}">{{ order.user_id }} ({{ username }})</a></p>
+        <p class="card-text"><strong>订单日期:</strong> {{ order.order_date }}</p>
+        <p class="card-text"><strong>总金额:</strong> {{ "%.2f" | format(order.total_amount) }}</p>
+        <p class="card-text"><strong>国家:</strong> {{ order.country }}</p>
+        <p class="card-text"><strong>状态:</strong> {{ order.status }}</p>
+        <a href="{{ url_for('list_orders') }}" class="btn btn-secondary">返回订单列表</a>
+    </div>
+</div>
+
+<h3>订单商品明细</h3>
+{% if order_items %}
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>商品编码</th>
+                <th>描述</th>
+                <th>数量</th>
+                <th>单价</th>
+                <th>总价</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order_items %}
+            <tr>
+                <td>{{ item.StockCode }}</td>
+                <td>{{ item.Description }}</td>
+                <td>{{ item.Quantity }}</td>
+                <td>{{ "%.2f" | format(item.UnitPrice) }}</td>
+                <td>{{ "%.2f" | format(item.total_price) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>此订单没有商品明细。</p>
+{% endif %}
+{% endblock %}

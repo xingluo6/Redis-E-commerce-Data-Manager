@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}数据管理{% endblock %}
+
+{% block content %}
+<h2>数据管理</h2>
+<p>在此页面您可以生成模拟数据或加载真实数据集并存储到 Redis，或清空现有数据。</p>
+
+<div class="card mb-3">
+    <div class="card-header">
+        生成并存储 Faker 模拟数据
+    </div>
+    <div class="card-body">
+        <p class="card-text">此操作将生成新的模拟商品、用户和订单数据，并将其存储到 Redis 中。**注意：此操作默认会清空 Redis 数据库 (DB 0) 中的所有现有数据。**</p>
+        <form method="POST" action="{{ url_for('data_management') }}">
+            <input type="hidden" name="action" value="generate_and_store_faker">
+            <button type="submit" class="btn btn-primary">生成并存储 Faker 数据</button>
+        </form>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        加载并存储 Online Retail 数据集
+    </div>
+    <div class="card-body">
+        <p class="card-text">此操作将从 `data.csv` 文件加载真实电商数据，清洗后存储到 Redis 中。**注意：此操作默认会清空 Redis 数据库 (DB 0) 中的所有现有数据。** 请确保 `data.csv` 文件已放置在项目根目录。</p>
+        <form method="POST" action="{{ url_for('data_management') }}">
+            <input type="hidden" name="action" value="load_and_store_online_retail">
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" value="true" id="fake_fill_missing" name="fake_fill_missing" checked>
+                <label class="form-check-label" for="fake_fill_missing">
+                    自动补足缺失的用户/商品信息 (如邮箱、描述、分类等)
+                </label>
+            </div>
+            <button type="submit" class="btn btn-success">加载并存储 Online Retail 数据</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        清空 Redis 数据库
+    </div>
+    <div class="card-body">
+        <p class="card-text">此操作将清空 Redis 数据库 (DB 0) 中的所有数据。**请谨慎操作！此操作不可逆！**</p>
+        <form method="POST" action="{{ url_for('data_management') }}" onsubmit="return confirm('您确定要清空 Redis 数据库吗？此操作不可逆！');">
+            <input type="hidden" name="action" value="flush_db">
+            <button type="submit" class="btn btn-danger">清空数据库</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
