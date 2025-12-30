@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}编辑订单状态{% endblock %}
+
+{% block content %}
+<h2>编辑订单状态 - {{ order.order_id[:8] }}...</h2>
+
+<form method="POST">
+    <div class="mb-3">
+        <label for="status" class="form-label">当前状态</label>
+        <input type="text" class="form-control" id="current_status_display" value="{{ order.status }}" readonly>
+    </div>
+    <div class="mb-3">
+        <label for="status" class="form-label">选择新状态</label>
+        <select class="form-select" id="status" name="status" required>
+            {% set available_statuses = ['待付款', '已付款', '已发货', '已完成', '已取消'] %}
+            {% for s in available_statuses %}
+                <option value="{{ s }}" {% if order.status == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">保存状态</button>
+    <a href="{{ url_for('order_detail', order_id=order.order_id) }}" class="btn btn-secondary">取消</a>
+</form>
+{% endblock %}

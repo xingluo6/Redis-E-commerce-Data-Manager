@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<h2>{{ title }}</h2>
+
+<form method="POST">
+    <div class="mb-3">
+        <label for="name" class="form-label">商品名称</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{ product.name if product else '' }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">描述</label>
+        <textarea class="form-control" id="description" name="description" rows="5">{{ product.description if product else '' }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="category" class="form-label">分类</label>
+        <select class="form-select" id="category" name="category" required>
+            {% for cat in categories %}
+                <option value="{{ cat }}" {% if product and product.category == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+            {% if not product or product.category not in categories %}
+                <option value="{{ product.category if product else '' }}" {% if product and product.category not in categories %}selected{% endif %} hidden>{{ product.category if product else '选择或输入分类' }}</option>
+            {% endif %}
+        </select>
+        <!-- 允许用户输入新的分类 -->
+        <input type="text" class="form-control mt-2" id="new_category" placeholder="输入新分类 (如果列表中没有)" onchange="document.getElementById('category').value = this.value;">
+    </div>
+    <div class="mb-3">
+        <label for="price" class="form-label">价格</label>
+        <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ "%.2f" | format(product.price) if product else '' }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="stock" class="form-label">库存</label>
+        <input type="number" class="form-control" id="stock" name="stock" value="{{ product.stock if product else '' }}" required>
+    </div>
+    <button type="submit" class="btn btn-primary">保存</button>
+    <a href="{{ url_for('list_products') }}" class="btn btn-secondary">取消</a>
+</form>
+{% endblock %}

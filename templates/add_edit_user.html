@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<h2>{{ title }}</h2>
+
+<form method="POST">
+    <div class="mb-3">
+        <label for="username" class="form-label">用户名</label>
+        <input type="text" class="form-control" id="username" name="username" value="{{ user.username if user else '' }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">邮箱</label>
+        <input type="email" class="form-control" id="email" name="email" value="{{ user.email if user else '' }}" required>
+    </div>
+    {% if user %}
+    <div class="mb-3">
+        <label for="registration_date" class="form-label">注册日期</label>
+        <input type="text" class="form-control" id="registration_date" value="{{ user.registration_date }}" readonly>
+    </div>
+    <div class="mb-3">
+        <label for="last_login" class="form-label">最后登录</label>
+        <input type="text" class="form-control" id="last_login" value="{{ user.last_login }}" readonly>
+    </div>
+    {% endif %}
+    <button type="submit" class="btn btn-primary">保存</button>
+    <a href="{{ url_for('list_users') }}" class="btn btn-secondary">取消</a>
+</form>
+{% endblock %}

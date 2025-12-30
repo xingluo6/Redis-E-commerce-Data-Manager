@@ -3,104 +3,127 @@
 {% block title %}数据分析{% endblock %}
 
 {% block content %}
-<h2>数据分析报告</h2>
+<div class="container mt-4">
+    <h2>数据分析报告</h2>
 
-{% if analysis_results.error %}
-    <div class="alert alert-danger">{{ analysis_results.error }}</div>
-{% else %}
-<div class="row">
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header">
-                商品概览
+    {% if analysis_results.error %}
+        <div class="alert alert-danger">{{ analysis_results.error }}</div>
+    {% else %}
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    商品概览
+                </div>
+                <div class="card-body">
+                    <p><strong>总商品数:</strong> {{ analysis_results.total_products }}</p>
+                    <p><strong>总分类数:</strong> {{ analysis_results.total_categories }}</p>
+                </div>
             </div>
-            <div class="card-body">
-                <p><strong>总商品数:</strong> {{ analysis_results.total_products }}</p>
-                <p><strong>总分类数:</strong> {{ analysis_results.total_categories }}</p>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    用户概览
+                </div>
+                <div class="card-body">
+                    <p><strong>总用户数:</strong> {{ analysis_results.total_users }}</p>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header">
-                用户概览
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    热门分类 (按商品数量)
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for category, count in analysis_results.top_categories %}
+                        <li class="list-group-item">{{ category | capitalize }}: {{ count }} 种商品</li>
+                    {% else %}
+                        <li class="list-group-item">暂无数据。</li>
+                    {% endfor %}
+                </ul>
             </div>
-            <div class="card-body">
-                <p><strong>总用户数:</strong> {{ analysis_results.total_users }}</p>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    价格最高的 5 个商品
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for product in analysis_results.top_priced_products %}
+                        <li class="list-group-item">名称: {{ product.name }}: {{ "%.2f" | format(product.price | float) }}</li>
+                    {% else %}
+                        <li class="list-group-item">暂无数据。</li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header">
-                热门分类 (按商品数量)
+    <div class="card mb-4">
+        <div class="card-header">
+            低库存商品预警 (库存 < 10)
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for product in analysis_results.low_stock_products %}
+                <li class="list-group-item">ID: {{ product.id[:8] }}... | 名称: {{ product.name }} | 库存: {{ product.stock }}</li>
+            {% else %}
+                <li class="list-group-item">暂无低库存商品。</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            热门销售商品 (按销售数量)
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for product in analysis_results.top_selling_products %}
+                <li class="list-group-item">名称: {{ product.name }}: {{ product.sales_count }}</li>
+            {% else %}
+                <li class="list-group-item">暂无数据。</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            最近登录的 5 个用户
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for user in analysis_results.recent_logins %}
+                <li class="list-group-item">用户名: {{ user.username }} | 最后登录: {{ user.last_login }}</li>
+            {% else %}
+                <li class="list-group-item">暂无数据。</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <h3>数据可视化</h3>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                {{ charts.category_distribution | safe }}
             </div>
-            <ul class="list-group list-group-flush">
-                {% for category, count in analysis_results.top_categories %}
-                    <li class="list-group-item">{{ category | capitalize }}: {{ count }} 种商品</li>
-                {% else %}
-                    <li class="list-group-item">暂无数据。</li>
-                {% endfor %}
-            </ul>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                {{ charts.top_selling_products | safe }}
+            </div>
         </div>
     </div>
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header">
-                价格最高的 5 个商品
+    <div class="row">
+        <div class="col-md-12">
+            <div class="chart-container">
+                {{ charts.monthly_sales_trend | safe }}
             </div>
-            <ul class="list-group list-group-flush">
-                {% for product in analysis_results.top_priced_products %}
-                    <li class="list-group-item">{{ product.name }}: {{ "%.2f" | format(product.price | float) }}</li>
-                {% else %}
-                    <li class="list-group-item">暂无数据。</li>
-                {% endfor %}
-            </ul>
         </div>
     </div>
-</div>
 
-<div class="card mb-4">
-    <div class="card-header">
-        低库存商品预警 (库存 < 10)
-    </div>
-    <ul class="list-group list-group-flush">
-        {% for product in analysis_results.low_stock_products %}
-            <li class="list-group-item">ID: {{ product.id[:8] }}... | 名称: {{ product.name }} | 库存: {{ product.stock }}</li>
-        {% else %}
-            <li class="list-group-item">暂无低库存商品。</li>
-        {% endfor %}
-    </ul>
+    {% endif %}
 </div>
-
-<div class="card mb-4">
-    <div class="card-header">
-        热门销售商品 (按销售数量)
-    </div>
-    <ul class="list-group list-group-flush">
-        {% for product in analysis_results.top_selling_products %}
-            <li class="list-group-item">名称: {{ product.name }} | 销售数量: {{ product.sales_count }}</li>
-        {% else %}
-            <li class="list-group-item">暂无数据。</li>
-        {% endfor %}
-    </ul>
-</div>
-
-<div class="card mb-4">
-    <div class="card-header">
-        最近登录的 5 个用户
-    </div>
-    <ul class="list-group list-group-flush">
-        {% for user in analysis_results.recent_logins %}
-            <li class="list-group-item">用户名: {{ user.username }} | 最后登录: {{ user.last_login }}</li>
-        {% else %}
-            <li class="list-group-item">暂无数据。</li>
-        {% endfor %}
-    </ul>
-</div>
-
-{% endif %}
 {% endblock %}
